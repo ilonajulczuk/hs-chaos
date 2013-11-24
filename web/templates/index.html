@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+{% block body %}
+<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+    <script src="{{ url_for('static', filename='sockets.js') }}"></script>
+<div id='main'>
+    <table>
+        <tr>
+            <td>Reference photo</td>
+            <td>Current photo</td>
+        </tr>
+        <tr>
+            <td>
+                <img alt='tables' width='640px' height='480px' src='{{ url_for('static', filename='tables.png') }}'>
+            </td>
+            <td><img src='http://placekitten.com/640/480'</td>
+        </tr>
+    </table>
+</div>
+
+<div id='report'>
+    <h3>Chaos report</h3>
+    <p>So there are tables in #1</p>
+    
+    <h3>Write your username to claim a table!</h3>
+
+    <form class='table_form' >
+        
+        <input type="text" id='username' />
+        <select id='table_id'>
+            {% for table in tables %}
+                <option value={{table.id}}>Table: {{table.id}}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="Claim this table" />
+    <h4>Tables' status</h4>
+        <ul>
+            {% for table in tables %}
+            <li>
+                <ul>
+                    <li>table: {{ table.id }} </li>
+                    <li>chaos percentage: {{table.chaos_percentage}}</li>
+                    {% if table.occupied %}
+
+                        <li>Occupied by: {{ table.occupant }}</li>
+                    {% endif %}
+                </ul>
+            </li>
+            {% endfor %}
+        </ul>
+</div>
+
+<div id='comunication'>
+    <p id="log"></p>
+</div>
+{% endblock %}
+
