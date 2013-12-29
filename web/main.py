@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import render_template
+from flask import render_template, request
 from geventwebsocket.handler import WebSocketHandler
 from gevent.pywsgi import WSGIServer
 import redis
@@ -12,6 +12,13 @@ redis_client = redis.Redis()
 
 registered_tables = range(1, 5)
 
+
+@app.route("/status/", methods=['POST'])
+def post_status():
+    status_data = request.form['json_response']
+    return 'ok'
+
+
 @app.route("/")
 def index():
     context = {
@@ -20,6 +27,7 @@ def index():
         ]
     }
     return render_template('index.html', tables=context['tables'])
+
 
 def handle_websocket(ws):
     while True:
@@ -33,6 +41,7 @@ def handle_websocket(ws):
             print id, username
             claim_table(id, username)
 
+            print "sending to websocket"
             ws.send(json.dumps({'output': "cool, table %s claimed by: %s" % (id, username)}))
 
 

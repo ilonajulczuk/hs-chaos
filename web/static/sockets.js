@@ -1,6 +1,6 @@
 $(function() {
     if ("WebSocket" in window) {
-        ws = new WebSocket("ws://" + document.domain + ":8000/websocket");
+        ws = new WebSocket("ws://127.0.0.1:8000/websocket");
         ws.onmessage = function (msg) {
             var message = JSON.parse(msg.data);
             $("p#log").append(message.output + '<hr />');
@@ -14,7 +14,6 @@ $(function() {
         if (username == ''){
             alert('Provide username before claiming!');
             e.preventDefault();
-            return false
         }
         ws.send(JSON.stringify({'table_id': id, 'username': username}));
     });
