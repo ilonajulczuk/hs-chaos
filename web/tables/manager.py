@@ -70,7 +70,12 @@ class TableManager():
         self.update_table(table_id, user_id, how_long, action='claim')
 
     def free_table(self, table_id, user_id):
-        self.update_table(table_id, user_id, action='free', how_long=timedelta(0))
+        self.update_table(
+            table_id,
+            user_id,
+            action='free',
+            how_long=timedelta(0)
+        )
 
     def register_table(self, table_id, camera_id):
         table_data = pickle.dumps({
@@ -88,8 +93,8 @@ class TableManager():
         return self.redis_client.hkeys(self.table_index)
 
     def show_tables_statuses(self):
-        tables = self.get_tables()
-        return [self.check_table(table_id) in tables]
+        tables = self.get_tables_ids()
+        return [self.check_table(table_id) for table_id in tables]
 
     def check_table(self, table_id):
         raw_table_statuses = self.redis_client.lrange(
