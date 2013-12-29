@@ -27,6 +27,28 @@ class TestTableOperations(unittest.TestCase):
         self.assertEqual(table_status, desired_output)
         self.assertTrue(self.manager.is_table_used_now(table_id))
 
+    def test_showing_tables(self):
+        camera_id = 'camera-1'
+        sample_size = 4
+        users = ['user-%s' % x for x in xrange(sample_size)]
+        tables = ['table-%s' % x for x in range(sample_size)]
+
+        for table in tables:
+            self.manager.register_table(table, camera_id)
+
+        for n, (user, table) in enumerate(zip(users, tables)):
+            for x in xrange(n):
+                if (n + 1) % 2:
+                    self.manager.claim_table(table, user)
+                else:
+                    self.manager.free_table(table, user)
+
+        statuses = self.manager.show_tables_statuses()
+        self.assertEqual(len(statuses), sample_size)
+
+        for x in xrange(sample_size):
+            self.assertEqual(len(statuses[x]), x)
+
     def test_freeing_table(self):
         user_id = "user-1"
         table_id = "test-1"

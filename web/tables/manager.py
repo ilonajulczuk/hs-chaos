@@ -3,7 +3,7 @@ import pickle
 from datetime import timedelta, datetime
 
 
-class TableManager():
+class TableManager(object):
     table_statuses = 'table-{table_id}-status'
     table_index = 'tables'
     LIST_LIMIT = 10
