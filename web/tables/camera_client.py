@@ -6,7 +6,7 @@ from datetime import timedelta, datetime
 
 
 class CameraClient(object):
-    def __init__(self, camera_id, tables):
+    def __init__(self, camera_id, tables, redis_credentials):
         """Camera should have an unique id and clearly define
         it's tables"""
 
@@ -14,10 +14,12 @@ class CameraClient(object):
         self.camera_id = camera_id
         self.tables = tables
         self.camera_image_list = '%s-image' % camera_id
-        self.redis_client = redis.Redis()
+        self.redis_client = redis.Redis(**redis_credentials)
         self.table_chaos = 'table-chaos-{table_id}'
+
     def register(self)
-        self.redis_client.lpush(camera_id, *tables)
+        self.redis_client.sadd('cameras', self.camera_id)
+        self.redis_client.sadd(self.camera_id, *self.tables)
 
     def push_data(self, image_path, chaos_levels):
         self.push_image(image)
@@ -27,7 +29,7 @@ class CameraClient(object):
         for table_id, chaos_level in chaos_levels:
             table_key = self.table_chaos.format(table_id)
             self.redis_client.lpush(
-                table_id,
+                table_key,
                 chaos_level
             )
             self.redis_client.ltrim(

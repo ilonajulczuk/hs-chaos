@@ -104,3 +104,4 @@ class TableManager(object):
         )
 
         return [pickle.loads(status) for status in raw_table_statuses]
+
