@@ -1,22 +1,55 @@
 <!doctype html>
-<title>Chaos detector</title>
-<style>
-    body {
-        margin: 20px;
-    }
-</style>
 
-<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
-<div class=page>
-  <h1>
+<head>
+    <title>Chaos detector</title>
+    <style>
+        body {
+            margin-top: 60px;
+            margin-bottom: 60px;
+        }
+    </style>
+
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap.css') }}">
+</head>
+
+<body>
+    <div class=page>
+        <div class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="../">Chaos</a>
+                    <div class="nav-collapse collapse" id="main-menu">
+                        <ul class="nav" id="main-menu-left">
+                        <ul class="nav pull-right" id="main-menu-right">
+                            <li><a rel="tooltip" target="_blank" href="">Log out</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <h1>
       Chaos detector
   </h1>
-  <div class=metanav>
-  </div>
-  {% for message in get_flashed_messages() %}
-    <div class=flash>{{ message }}</div>
-  {% endfor %}
-  {% block body %}
-  {% endblock %}
-</div>
+            <div class=metanav>
+            </div>
+            {% for message in get_flashed_messages() %}
+            <div class=flash>{{ message }}</div>
+            {% endfor %} {% block body %} {% endblock %}
+        </div>
+    </div>
+<hr/>
+    <div class="well-large footer pull-right">
+        <h4>Project by Warsaw Hackerspace</h4>
+        <p>
+            flask/bootstrap/redis/opencv
+        </p>
+    </div>
+</body>
 
+</html>

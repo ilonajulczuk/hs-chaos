@@ -3,54 +3,99 @@
 <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
     <script src="{{ url_for('static', filename='sockets.js') }}"></script>
 <div id='main'>
-    <table>
-        <tr>
-            <td>Reference photo</td>
-            <td>Current photo</td>
-        </tr>
-        <tr>
-            <td>
-                <img alt='tables' width='640px' height='480px' src='{{ url_for('static', filename='tables.png') }}'>
-            </td>
-            <td><img src='http://placekitten.com/640/480'</td>
-        </tr>
-    </table>
+    <div class="hero-unit">
+        <h1>Chaos!</h1>
+        <p>Oh, cool! Let's fight with mess and be exellent to each other!</p>
+        <a href="" class="btn btn-success">Learn more!</a>
+    </div>
+    <h2>Available devices</h2>
+<div class="media">
+    <a class="pull-left" href="#">
+        <img class="media-object" src='http://placekitten.com/100/100'/>
+    </a>
+    <div class="media-body">
+    <h4 class="media-heading">Camera 1</h4>
+    <p>Camera placed in the first room</p>
+    </div>
 </div>
 
-<div id='report'>
-    <h3>Chaos report</h3>
-    <p>So there are tables in #1</p>
-    
-    <h3>Write your username to claim a table!</h3>
+    <hr />
+    <h2>Camera 1</h2>
 
-    <form class='table_form' >
-        
-        <input type="text" id='username' />
+<img class="media-object" src='http://placekitten.com/600/600'/>
+<div class="pagination pagination-large">
+    <ul>
+    <li><a href="#">Prev</a></li>
+    <li><a href="#">1</a></li>
+    <li><a href="#">2</a></li>
+    <li><a href="#">3</a></li>
+    <li><a href="#">4</a></li>
+    <li><a href="#">5</a></li>
+    <li><a href="#">Next</a></li>
+    </ul>
+    </div>
+
+    <h2>Camera one tables - basic info</h2>
+    <p>Tablu, tablu</p>
+
+    <h4>Tables' status</h4>
+    <div class="row">
+            {% for table in tables %}
+            <div class="well-large span8">
+
+                <div class="media">
+                    <a class="pull-left" href="#">
+                        <img class="media-object" src='http://placekitten.com/120/180'/>
+                    </a>
+                    <div class="media-body">
+                    <h4 class="media-heading">Table {{table.id}}</h4>
+                    <p>Camera placed in the first room</p>
+
+                    chaos percentage: {{table.chaos_percentage}}
+                    <div class="progress progress-success progress-striped">
+                    <div class="bar" style="width: 40%"></div>
+                    </div>
+                    <div class="progress progress-warning progress-striped">
+                    <div class="bar" style="width: 60%"></div>
+                    </div>
+                    <div class="progress progress-danger progress-striped">
+                    <div class="bar" style="width: 80%"></div>
+                    </div>
+                    {% if table.occupied %}
+                    Occupied by: {{ table.occupant }}
+                    {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+    </div>
+
+    <h2>Camera one tables - management</h2>
+    <p>
+        What's it all about?
+    </p>
+    <div class="well-large">
+    <form class='table_form form-horizontal'>
+
         <select id='table_id'>
             {% for table in tables %}
                 <option value={{table.id}}>Table: {{table.id}}</option>
             {% endfor %}
         </select>
-        <input type="submit" value="Claim this table" />
-    <h4>Tables' status</h4>
-        <ul>
-            {% for table in tables %}
-            <li>
-                <ul>
-                    <li>table: {{ table.id }} </li>
-                    <li>chaos percentage: {{table.chaos_percentage}}</li>
-                    {% if table.occupied %}
+        <a href="" class="btn btn-success">Claim</a>
+        <a href="" class="btn btn-default">Prolong</a>
+        <a href="" class="btn btn-warning">Free</a>
+    </form>
+    </div>
+    <h2>My table history</h2>
+    <p>Once upon a time, there is a table...</p>
 
-                        <li>Occupied by: {{ table.occupant }}</li>
-                    {% endif %}
-                </ul>
-            </li>
-            {% endfor %}
-        </ul>
 </div>
 
 <div id='comunication'>
     <p id="log"></p>
 </div>
+
+
 {% endblock %}
 
