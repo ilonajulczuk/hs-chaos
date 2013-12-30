@@ -1,9 +1,12 @@
 import unittest
+import random
 import datetime
 import pickle
 import mock
 from mockredis import mock_redis_client
 from tables.manager import TableManager
+from tables.reporter import ChaosReporter
+from tables.camera_client import CameraClient
 
 
 class TestTableOperations(unittest.TestCase):
@@ -90,6 +93,48 @@ class TestTableOperations(unittest.TestCase):
         self.manager = TableManager()
         self.mock_redis = mock_redis_client()
         self.manager.redis_client = self.mock_redis
+
+
+class CameraClientTest(unittest.TestCase):
+    def setUp(self):
+        self.sample_size = 4
+        tables = ['table-%s' % x for x in xrange(self.sample_size)]
+        self.client = CameraClient('camera', tables)
+        self.client.register()
+        self.mock_redis = mock_redis_client()
+        self.client.redis_client = self.mock_redis
+
+    def test_pushing_image(self):
+        image_path = 'tests_data/kitten.jpg'
+        self.client.push_image(
+            image_path
+        )
+        self.client.register()
+        reporter = ChaosReporter()
+        reporter.redis_client = self.mock_redis
+        images = reporter.get_images_for_all_cams()
+        image = images[0][0]
+        self.assertEqual(image.size, (200, 300))
+
+    def test_pushing_chaos_data(self):
+        sample_size = 19
+        table_id_1 = 'table_id_1'
+        table_id_2 = 'table_id_2'
+        chaos_levels = [{
+            table_id_1: random.randint(0, 100),
+            table_id_2: random.randint(0, 100),
+        } for x in xrange(sample_size)]
+        self.client.register()
+
+        reporter = ChaosReporter()
+        reporter.redis_client = self.mock_redis
+        for chaos_level in chaos_levels:
+            self.client.push_chaos_levels(chaos_level)
+
+        self.assertEqual(
+            len(reporter.get_last_chaos_levels(table_id_1)),
+            self.client.LIST_LIMIT
+        )
 
 if __name__ == '__main__':
     unittest.main()

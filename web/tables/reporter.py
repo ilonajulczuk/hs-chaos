@@ -1,11 +1,13 @@
 import redis
-import Image
+import StringIO
+from PIL import Image
 
 
 class ChaosReporter(object):
     table_index = 'tables'
+    table_chaos = 'table-chaos-{table_id}'
 
-    def __init__(self, redis_credentials):
+    def __init__(self, redis_credentials={}):
         self.redis_client = redis.Redis(**redis_credentials)
 
     def get_all_cameras(self):
@@ -16,15 +18,15 @@ class ChaosReporter(object):
 
     def get_last_images(self, camera_id):
         camera_image_list = '%s-image' % camera_id
-        raw_images = self.lrange(
+        raw_images = self.redis_client.lrange(
             camera_image_list,
             0,
             1000
         )
-        return [Image.fromstring(data=raw) for raw in raw_images)]
+        return [Image.open(StringIO.StringIO(raw)) for raw in raw_images]
 
     def get_last_chaos_levels(self, table_id):
-        table_key = self.table_chaos.format(table_id)
+        table_key = self.table_chaos.format(table_id=table_id)
 
         return self.redis_client.lrange(
             table_key,
@@ -34,8 +36,8 @@ class ChaosReporter(object):
 
     def get_images_for_all_cams(self):
         cameras = self.get_all_cameras()
-        return [get_last_images(camera) for camera in cameras]
+        return [self.get_last_images(camera) for camera in cameras]
 
     def get_chaos_levels_for_all_tables(self):
         tables = get_all_tables()
-        return [get_last_chaos_levels(table) for table in tables]
+        return [self.get_last_chaos_levels(table) for table in tables]
