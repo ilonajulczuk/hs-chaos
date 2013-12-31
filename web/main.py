@@ -37,18 +37,22 @@ def fetch_chaos_percentage(table_id):
 
 def table_statuses():
     manager = TableManager()
+    manager.claim_table('table_id_1', 'att')
     reporter = ChaosReporter()
     tables_ids = reporter.get_all_tables()
     tables = []
     for table_id in tables_ids:
         chaos_level = reporter.get_chaos_levels(table_id)[0]
         occupancy_data = manager.check_table(table_id)
+        occupied = manager.is_table_used_now(table_id)
         table_status = {
             'id': table_id,
-            'chaos_percentage': chaos_level
+            'chaos_percentage': chaos_level,
+            'actions': occupancy_data,
+            'occupied': occupied
         }
 
-        if int(chaos_level) > 50:
+        if int(chaos_level) > 50 and not occupied:
             table_status['message'] = 'Oh snap! There\'s a mess and there is nobody near!'
         tables.append(table_status)
 

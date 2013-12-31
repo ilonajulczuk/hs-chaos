@@ -5,7 +5,7 @@
 <div id='main'>
     <div class="hero-unit">
         <h1>Chaos!</h1>
-        <p>Oh, cool! Let's fight with mess and be exellent to each other!</p>
+        <p>Oh, cool! Let's fight with mess and be excellent to each other!</p>
         <a href="" class="btn btn-success">Learn more!</a>
     </div>
     <h2>Available devices</h2>
@@ -60,14 +60,16 @@
                         {{ table.message }}
                     </div>
                     {% endif %}
-
+                    <p>
                     {% if table.occupied %}
-                    Occupied by: {{ table.occupant }}
+                        Occupied by: {{ table.actions[0].user_id }}
                     {% else %}
-                    Table is free.
+                        Table is free.
                     {% endif %}
-
-                    chaos percentage:
+                    </p>
+                    <p>
+                        chaos percentage:
+                    </p>
                     <div class="progress progress-warning progress-striped">
                     <div class="bar" style="width: {{table.chaos_percentage}}%"></div>
                     </div>
@@ -77,7 +79,13 @@
                 </div>
             </div>
             <div class="well-large span4">
-            <h4>Last actions</h4>
+                <h4>Last actions</h4>
+                {% for action in table.actions %}
+                    <p>At {{ action.created.ctime()}} {{ action.user_id }} {{action.action}}ed table
+                    {%if action.action == 'claim' %} for {{ action.how_long}}{% endif %} </p>
+
+                {% endfor %}
+
             </div>
         </div>
 

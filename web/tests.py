@@ -132,7 +132,7 @@ class CameraClientTest(unittest.TestCase):
             self.client.push_chaos_levels(chaos_level)
 
         self.assertEqual(
-            len(reporter.get_last_chaos_levels(table_id_1)),
+            len(reporter.get_chaos_levels(table_id_1)),
             self.client.LIST_LIMIT
         )
 
