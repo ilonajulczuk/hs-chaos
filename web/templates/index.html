@@ -22,7 +22,7 @@
     <hr />
     <h2>Camera 1</h2>
 
-<img class="media-object" src='http://placekitten.com/600/600'/>
+<img class="media-object" src="{{ url_for('static', filename=path)}}"/>
 <div class="pagination pagination-large">
     <ul>
     <li><a href="#">Prev</a></li>
@@ -31,6 +31,11 @@
     <li><a href="#">3</a></li>
     <li><a href="#">4</a></li>
     <li><a href="#">5</a></li>
+    <li><a href="#">6</a></li>
+    <li><a href="#">7</a></li>
+    <li><a href="#">8</a></li>
+    <li><a href="#">9</a></li>
+    <li><a href="#">10</a></li>
     <li><a href="#">Next</a></li>
     </ul>
     </div>
@@ -39,8 +44,8 @@
     <p>Tablu, tablu</p>
 
     <h4>Tables' status</h4>
-    <div class="row">
-            {% for table in tables %}
+    {% for table in tables %}
+        <div class="row-fluid">
             <div class="well-large span8">
 
                 <div class="media">
@@ -49,27 +54,34 @@
                     </a>
                     <div class="media-body">
                     <h4 class="media-heading">Table {{table.id}}</h4>
-                    <p>Camera placed in the first room</p>
 
-                    chaos percentage: {{table.chaos_percentage}}
-                    <div class="progress progress-success progress-striped">
-                    <div class="bar" style="width: 40%"></div>
+                    {% if table.message %}
+                    <div class="alert alert-error">
+                        {{ table.message }}
                     </div>
-                    <div class="progress progress-warning progress-striped">
-                    <div class="bar" style="width: 60%"></div>
-                    </div>
-                    <div class="progress progress-danger progress-striped">
-                    <div class="bar" style="width: 80%"></div>
-                    </div>
+                    {% endif %}
+
                     {% if table.occupied %}
                     Occupied by: {{ table.occupant }}
+                    {% else %}
+                    Table is free.
                     {% endif %}
+
+                    chaos percentage:
+                    <div class="progress progress-warning progress-striped">
+                    <div class="bar" style="width: {{table.chaos_percentage}}%"></div>
+                    </div>
+
+
                     </div>
                 </div>
             </div>
-            {% endfor %}
-    </div>
+            <div class="well-large span4">
+            <h4>Last actions</h4>
+            </div>
+        </div>
 
+    {% endfor %}
     <h2>Camera one tables - management</h2>
     <p>
         What's it all about?

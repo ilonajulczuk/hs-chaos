@@ -17,6 +17,7 @@ class ChaosReporter(object):
         return self.redis_client.hkeys(self.table_index)
 
     def get_last_images(self, camera_id):
+        # todo make images available in js
         camera_image_list = '%s-image' % camera_id
         raw_images = self.redis_client.lrange(
             camera_image_list,
@@ -25,7 +26,12 @@ class ChaosReporter(object):
         )
         return [Image.open(StringIO.StringIO(raw)) for raw in raw_images]
 
-    def get_last_chaos_levels(self, table_id):
+    def store_image(self, camera_id, image):
+        path = camera_id + 'recent.jpg'
+        image.save(path)
+        return path
+
+    def get_chaos_levels(self, table_id):
         table_key = self.table_chaos.format(table_id=table_id)
 
         return self.redis_client.lrange(

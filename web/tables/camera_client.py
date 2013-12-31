@@ -13,6 +13,7 @@ class CameraClient(object):
         self.LIST_LIMIT = 10
         self.camera_id = camera_id
         self.tables = tables
+        self.table_index = 'tables'
         self.camera_image_list = '%s-image' % camera_id
         self.redis_client = redis.Redis(**redis_credentials)
         self.table_chaos = 'table-chaos-{table_id}'
@@ -20,6 +21,21 @@ class CameraClient(object):
     def register(self):
         self.redis_client.sadd('cameras', self.camera_id)
         self.redis_client.sadd(self.camera_id, *self.tables)
+
+        for table_id in self.tables:
+            self.register_table(table_id, self.camera_id)
+
+    def register_table(self, table_id, camera_id):
+        table_data = pickle.dumps({
+            "camera_id": camera_id,
+            "registered": datetime.now()
+        })
+
+        self.redis_client.hset(
+            self.table_index,
+            table_id,
+            table_data
+        )
 
     def push_data(self, image_path, chaos_levels):
         self.push_image(image)
