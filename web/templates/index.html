@@ -43,7 +43,9 @@
     <h2>Camera one tables - basic info</h2>
     <p>Tablu, tablu</p>
 
-    <h4>Tables' status</h4>
+    <h4>Tables' status
+        <a href="{{url_for('index')}}" class="btn btn-warning btn-large">Reload</a>
+    </h4>
     {% for table in tables %}
         <div class="row-fluid">
             <div class="well-large span8">
@@ -97,16 +99,19 @@
         What's it all about?
     </p>
     <div class="well-large">
-    <form class='table_form form-horizontal'>
+    <form class='table_form form-horizontal'
+        action="{{ url_for('index') }}" method=post>
 
-        <select id='table_id'>
+        <select id='table_id' name='table_id'>
             {% for table in tables %}
                 <option value={{table.id}}>Table: {{table.id}}</option>
             {% endfor %}
         </select>
-        <a href="" class="btn btn-success">Claim</a>
-        <a href="" class="btn btn-default">Prolong</a>
-        <a href="" class="btn btn-warning">Free</a>
+        <select id='action' name='action'>
+            <option value="claim">Claim</option>
+            <option value="free">Free</option>
+        </select>
+        <input type="submit" value="Ok" class="btn btn-success">
     </form>
     </div>
     <h2>My table history</h2>

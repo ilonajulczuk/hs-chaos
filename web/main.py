@@ -3,6 +3,7 @@ from flask import Flask
 from flask import (
     render_template,
     request,
+    g,
     url_for,
     session,
     flash,
@@ -30,8 +31,24 @@ def post_status():
     return 'ok'
 
 
-@app.route("/")
+@app.route("/", methods=['GET', 'POST'])
 def index():
+    if request.method == 'POST':
+        if not session['username']:
+            return redirect(url_for('login'))
+        try:
+            table_id = request.form['table_id']
+            action = request.form['action']
+            user_id = session['username']
+            manager = TableManager()
+            if action == 'claim':
+                manager.claim_table(table_id, user_id)
+            elif action == 'free':
+                manager.free_table(table_id, user_id)
+
+        except:
+            pass
+
     reporter = ChaosReporter()
     images = reporter.get_last_images('camera')
     path = reporter.store_image('camera', images[0])
