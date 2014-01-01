@@ -33,7 +33,7 @@ class ChaosReporter(object):
 
     def get_chaos_levels(self, table_id):
         table_key = self.table_chaos.format(table_id=table_id)
-
+        print table_key
         return self.redis_client.lrange(
             table_key,
             0,

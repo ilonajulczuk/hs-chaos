@@ -25,7 +25,12 @@
                     <div class="nav-collapse collapse" id="main-menu">
                         <ul class="nav" id="main-menu-left">
                             <ul class="nav pull-right" id="main-menu-right">
-                                <li><a rel="tooltip" target="_blank" href="">Log out</a>
+                                <li>
+                {% if not session.logged_in %}
+                                  <a class="action login" href="{{ url_for('login') }}">Log in</a>
+                {% else %}
+                                                                    <a class="action logout" href="{{ url_for('logout') }}">Log out</a>
+                {% endif %}
                                 </li>
                             </ul>
                     </div>

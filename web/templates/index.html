@@ -90,6 +90,8 @@
         </div>
 
     {% endfor %}
+
+    {% if session.logged_in %}
     <h2>Camera one tables - management</h2>
     <p>
         What's it all about?
@@ -111,7 +113,13 @@
     <p>Once upon a time, there is a table...</p>
 
 </div>
+    {% else %}
+    <p>
 
+                                  <a class="action login" href="{{ url_for('login') }}">Log in</a>
+    to manage tables and see your history.
+    </p>
+    {% endif %}
 <div id='comunication'>
     <p id="log"></p>
 </div>
