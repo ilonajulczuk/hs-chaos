@@ -6,7 +6,7 @@
     <div class="hero-unit">
         <h1>Chaos!</h1>
         <p>Oh, cool! Let's fight with mess and be excellent to each other!</p>
-        <a href="" class="btn btn-success">Learn more!</a>
+        <a href="https://wiki.hackerspace.pl/projects:hs-chaos" class="btn btn-success">Learn more!</a>
     </div>
     <h2>Available devices</h2>
 <div class="media">
@@ -14,34 +14,17 @@
         <img class="media-object" src='http://placekitten.com/100/100'/>
     </a>
     <div class="media-body">
-    <h4 class="media-heading">Camera 1</h4>
-    <p>Camera placed in the first room</p>
+        <h4 class="media-heading">Camera 1</h4>
+        <p>Camera placed in the first room</p>
     </div>
 </div>
 
     <hr />
     <h2>Camera 1</h2>
 
-<img class="media-object" src="{{ url_for('static', filename=path)}}"/>
-<div class="pagination pagination-large">
-    <ul>
-    <li><a href="#">Prev</a></li>
-    <li><a href="#">1</a></li>
-    <li><a href="#">2</a></li>
-    <li><a href="#">3</a></li>
-    <li><a href="#">4</a></li>
-    <li><a href="#">5</a></li>
-    <li><a href="#">6</a></li>
-    <li><a href="#">7</a></li>
-    <li><a href="#">8</a></li>
-    <li><a href="#">9</a></li>
-    <li><a href="#">10</a></li>
-    <li><a href="#">Next</a></li>
-    </ul>
-    </div>
+    <img class="media-object" src="{{ url_for('static', filename=path)}}"/>
 
     <h2>Camera one tables - basic info</h2>
-    <p>Tablu, tablu</p>
 
     <h4>Tables' status
         <a href="{{url_for('index')}}" class="btn btn-warning btn-large">Reload</a>
@@ -114,8 +97,6 @@
         <input type="submit" value="Ok" class="btn btn-success">
     </form>
     </div>
-    <h2>My table history</h2>
-    <p>Once upon a time, there is a table...</p>
 
 </div>
     {% else %}
