@@ -20,9 +20,6 @@ import requests
 SECRET_KEY = 'development key'
 app = Flask(__name__)
 app.config.from_object(__name__)
-TABLE_TIMEOUT = 60 * 100
-
-redis_client = redis.Redis()
 
 
 @app.route("/status/", methods=['POST'])
@@ -30,11 +27,11 @@ def post_status():
     status_data = request.form['json_response']
     return 'ok'
 
-
 def store_image(image):
     path = "camera_current.jpg"
     image.save('static' + '/' + path)
     return path
+
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
@@ -63,6 +60,13 @@ def index():
     }
     return render_template('index.html', **context)
 
+@app.route('/claim', methods=['POST'])
+def claim():
+    pass
+
+@app.route('/free', methods=['POST'])
+def free():
+    pass
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -94,12 +98,6 @@ def logout():
 
 
 
-def fetch_chaos_percentage(table_id):
-    import random
-
-    return ('%s' % random.randint(1, 100)) + '%'
-
-
 def table_statuses():
     manager = TableManager()
     camera = Camera('camera')
@@ -121,26 +119,7 @@ def table_statuses():
         table_statuses.append(table_status)
     return table_statuses
 
-
-def check_if_occupied(table_id):
-    username = redis_client.get('table-%s' % table_id)
-    if not username:
-        return False, None
-    else:
-        return True, username
-
-
-def claim_table(id, username):
-    manager = TableManager()
-    return manager.claim_table(id, username)
-
-
 app.debug = True
-
-def my_app(environ, start_response):
-    path = environ["PATH_INFO"]
-    return app(environ, start_response)
-
 
 if __name__ == "__main__":
     app.run()
