@@ -2,13 +2,10 @@ import time
 import random
 
 from tables.models import Camera
-from tables.camera_client import CameraClient
-from tables.reporter import ChaosReporter
 
 
 class FakeCamera(object):
     def __init__(self):
-        self.sample_size = 4
         tables  = ['table_id_1', 'table_id_2']
         self.camera = Camera('camera')
 
@@ -19,7 +16,6 @@ class FakeCamera(object):
         )
 
     def push_chaos_data(self):
-        sample_size = 19
         table_id_1 = 'table_id_1'
         table_id_2 = 'table_id_2'
         chaos_levels = {
