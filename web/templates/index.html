@@ -90,11 +90,8 @@
                 <option value={{table.id}}>Table: {{table.id}}</option>
             {% endfor %}
         </select>
-        <select id='action' name='action'>
-            <option value="claim">Claim</option>
-            <option value="free">Free</option>
-        </select>
-        <input type="submit" value="Ok" class="btn btn-success">
+        <input id="claim" value="Claim" class="btn btn-success">
+        <input id="free"  value="Free" class="btn btn-success">
     </form>
     </div>
 
@@ -106,10 +103,37 @@
     to manage tables and see your history.
     </p>
     {% endif %}
-<div id='comunication'>
-    <p id="log"></p>
-</div>
 
+    <script>
+        function claim_table() {
+            $.post(
+                '/claim', {
+                bla: "bla bla",
+                table_id: $('#table_id').val()
+                }
+            ).done(function() {
+                $('#communication').append('<p>Claimed, Ok.</p>');
+            }
+            );
+        }
+
+        function free_table() {
+            $.post(
+                '/free', {
+                table_id: $('#table_id').val()
+                }
+            ).done(function() {
+                $('#communication').append('<p>Freed, Ok.</p>');
+            }
+            );
+        }
+        $(function() {
+            $('#claim').click(claim_table);
+            $('#free').click(free_table);
+        });
+
+    </script>
 
 {% endblock %}
-
+<div id="communication">
+</div>

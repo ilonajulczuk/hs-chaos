@@ -15,12 +15,21 @@ from tables.reporter import ChaosReporter
 import redis
 import json
 import requests
-
+import functools
 
 SECRET_KEY = 'development key'
 app = Flask(__name__)
 app.config.from_object(__name__)
 
+
+def login_required(fn):
+    @functools.wraps
+    def inner(*args, **kwargs):
+        if not session['username']:
+            return "404"
+        else:
+            return fn(*args, **kwargs)
+    return inner
 
 @app.route("/status/", methods=['POST'])
 def post_status():
@@ -60,13 +69,24 @@ def index():
     }
     return render_template('index.html', **context)
 
+@login_required
 @app.route('/claim', methods=['POST'])
 def claim():
-    pass
+    table_id = request.form['table_id']
+    table = Table(table_id)
+    table.claim(session['username'])
 
+    flash('Table: %s in now on you. Take care of it!' % table_id)
+    return "200"
+
+@login_required
 @app.route('/free', methods=['POST'])
 def free():
-    pass
+    table_id = request.form['table_id']
+    table = Table(table_id)
+    table.free(session['username'])
+    flash('Table: %s is now free. Thanks!' % table_id)
+    return "200"
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
