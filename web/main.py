@@ -10,7 +10,7 @@ from flask import (
     redirect
 )
 
-from tables.manager import TableManager
+from tables.models import Table, Camera, TableManager
 from tables.reporter import ChaosReporter
 import redis
 import json
@@ -31,6 +31,11 @@ def post_status():
     return 'ok'
 
 
+def store_image(image):
+    path = "camera_current.jpg"
+    image.save('static' + '/' + path)
+    return path
+
 @app.route("/", methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
@@ -41,17 +46,17 @@ def index():
             action = request.form['action']
             user_id = session['username']
             manager = TableManager()
+            table = Table(table_id)
             if action == 'claim':
-                manager.claim_table(table_id, user_id)
+                table.claim(user_id)
             elif action == 'free':
-                manager.free_table(table_id, user_id)
+                table.free(user_id)
 
         except:
             pass
-
-    reporter = ChaosReporter()
-    images = reporter.get_last_images('camera')
-    path = reporter.store_image('camera', images[0])
+    camera = Camera('camera')
+    images = camera.get_images()
+    path = store_image(images[0])
     context = {
         'path': path,
         'tables': table_statuses(),
@@ -97,29 +102,24 @@ def fetch_chaos_percentage(table_id):
 
 def table_statuses():
     manager = TableManager()
-    reporter = ChaosReporter()
-    tables_ids = reporter.get_all_tables()
-    tables = []
-    for table_id in tables_ids:
-        try:
-            chaos_level = reporter.get_chaos_levels(table_id)[0]
-            occupancy_data = manager.check_table(table_id)
-            occupied = manager.is_table_used_now(table_id)
-            table_status = {
-                'id': table_id,
-                'chaos_percentage': chaos_level,
-                'actions': occupancy_data,
-                'occupied': occupied
-            }
+    camera = Camera('camera')
+    tables = manager.get_all_tables()
+    table_statuses = []
+    for table in tables:
+        chaos_level = camera.get_chaos_levels(table.id)[0]
+        occupancy_data = table.check()
+        occupied = table.is_used_now()
+        table_status = {
+            'id': table.id,
+            'chaos_percentage': chaos_level,
+            'actions': occupancy_data,
+            'occupied': occupied
+        }
 
-            if int(chaos_level) > 50 and not occupied:
-                table_status['message'] = 'Oh snap! There\'s a mess and there is nobody near!'
-            tables.append(table_status)
-        except:
-            # TODO - create some logging system
-            pass
-
-    return tables
+        if int(chaos_level) > 50 and not occupied:
+            table_status['message'] = 'Oh snap! There\'s a mess and there is nobody near!'
+        table_statuses.append(table_status)
+    return table_statuses
 
 
 def check_if_occupied(table_id):

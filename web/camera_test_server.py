@@ -1,6 +1,7 @@
 import time
 import random
 
+from tables.models import Camera
 from tables.camera_client import CameraClient
 from tables.reporter import ChaosReporter
 
@@ -9,17 +10,13 @@ class FakeCamera(object):
     def __init__(self):
         self.sample_size = 4
         tables  = ['table_id_1', 'table_id_2']
-        self.client = CameraClient('camera', tables)
-        self.client.register()
+        self.camera = Camera('camera')
 
     def push_image(self):
         image_path = 'tests_data/kitten.jpg'
-        self.client.push_image(
+        self.camera.push_image(
             image_path
         )
-        reporter = ChaosReporter()
-        images = reporter.get_images_for_all_cams()
-        image = images[0][0]
 
     def push_chaos_data(self):
         sample_size = 19
@@ -30,8 +27,7 @@ class FakeCamera(object):
             table_id_2: random.randint(0, 100),
         }
 
-        reporter = ChaosReporter()
-        self.client.push_chaos_levels(chaos_levels)
+        self.camera.push_chaos_levels(chaos_levels)
 
 def main():
     camera = FakeCamera()
