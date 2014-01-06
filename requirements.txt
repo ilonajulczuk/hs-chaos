@@ -1,10 +1,16 @@
 Flask==0.10.1
 Jinja2==2.7.1
 MarkupSafe==0.18
+Pillow==2.2.2
 Werkzeug==0.9.4
 gevent==0.13.8
 gevent-websocket==0.3.6
 greenlet==0.4.1
+hiredis==0.1.1
 itsdangerous==0.23
+mock==1.0.1
+mockredispy==2.8.0.2
 redis==2.8.0
+redismock==1.0.5
+requests==2.1.0
 wsgiref==0.1.2
