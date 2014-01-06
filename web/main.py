@@ -10,7 +10,7 @@ from flask import (
     redirect
 )
 
-from tables.models import Table, Camera, TableManager
+from tables.models import Table, Camera, TableManager, CameraManager
 from tables.reporter import ChaosReporter
 import redis
 import json
@@ -36,36 +36,23 @@ def post_status():
     status_data = request.form['json_response']
     return 'ok'
 
-def store_image(image):
-    path = "camera_current.jpg"
+def store_image(image, camera_id):
+    path = camera_id + "camera_current.jpg"
     image.save('static' + '/' + path)
     return path
 
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
-    if request.method == 'POST':
-        if not session['username']:
-            return redirect(url_for('login'))
-        try:
-            table_id = request.form['table_id']
-            action = request.form['action']
-            user_id = session['username']
-            manager = TableManager()
-            table = Table(table_id)
-            if action == 'claim':
-                table.claim(user_id)
-            elif action == 'free':
-                table.free(user_id)
-
-        except:
-            pass
-    camera = Camera('camera')
-    images = camera.get_images()
-    path = store_image(images[0])
+    cameras = CameraManager().get_all_cameras()
+    cameras_info = []
+    for camera in cameras:
+        images = camera.get_images()
+        path = store_image(images[0], camera.camera_id)
+        cameras_info.append((camera.camera_id, path))
     context = {
-        'path': path,
-        'tables': table_statuses(),
+        'cameras': cameras_info,
+        'tables_per_cam': table_statuses(),
     }
     return render_template('index.html', **context)
 
@@ -73,6 +60,7 @@ def index():
 @app.route('/claim', methods=['POST'])
 def claim():
     table_id = request.form['table_id']
+    print table_id
     table = Table(table_id)
     table.claim(session['username'])
 
@@ -117,27 +105,29 @@ def logout():
     return redirect(url_for('index'))
 
 
-
 def table_statuses():
     manager = TableManager()
-    camera = Camera('camera')
-    tables = manager.get_all_tables()
-    table_statuses = []
-    for table in tables:
-        chaos_level = camera.get_chaos_levels(table.id)[0]
-        occupancy_data = table.check()
-        occupied = table.is_used_now()
-        table_status = {
-            'id': table.id,
-            'chaos_percentage': chaos_level,
-            'actions': occupancy_data,
-            'occupied': occupied
-        }
+    cameras = CameraManager().get_all_cameras()
+    data_per_camera = {}
+    for camera in cameras:
+        tables = manager.get_all_tables(camera.camera_id)
+        table_statuses = []
+        for table in tables:
+            chaos_level = camera.get_chaos_levels(table.id)[0]
+            occupancy_data = table.check()
+            occupied = table.is_used_now()
+            table_status = {
+                'id': table.id,
+                'chaos_percentage': chaos_level,
+                'actions': occupancy_data,
+                'occupied': occupied
+            }
 
-        if int(chaos_level) > 50 and not occupied:
-            table_status['message'] = 'Oh snap! There\'s a mess and there is nobody near!'
-        table_statuses.append(table_status)
-    return table_statuses
+            if float(chaos_level) > 50 and not occupied:
+                table_status['message'] = 'Oh snap! There\'s a mess and there is nobody near!'
+            table_statuses.append(table_status)
+            data_per_camera[camera.camera_id] = table_statuses
+    return data_per_camera
 
 app.debug = True
 

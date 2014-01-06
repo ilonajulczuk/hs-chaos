@@ -17,7 +17,7 @@ camera_keys = {
 }
 
 CAMERA_KEYS = {
-    key: app_namespace + ":" +  cameras_namespace + "{camera_id}:" + value
+    key: app_namespace + ":" +  cameras_namespace + ":{camera_id}:" + value
     for key, value in camera_keys.iteritems()
 }
 
@@ -32,6 +32,22 @@ TABLE_KEYS = {
     key: app_namespace + ":" + value
     for key, value in table_keys.iteritems()
 }
+
+
+class CameraManager(object):
+
+    def __init__(self, **redis_credentials):
+        self.redis_client = redis.Redis(**redis_credentials)
+
+    def get_cameras_ids(self):
+        status_keys = self.redis_client.keys(
+            CAMERA_KEYS['chaos_levels'].format(camera_id="*", table_id="*")
+        )
+        ids = [key.split(":")[2] for key in status_keys]
+        return list(set(ids))
+
+    def get_all_cameras(self):
+        return [Camera(id) for id in self.get_cameras_ids()]
 
 
 class Camera(object):
@@ -109,15 +125,15 @@ class TableManager(object):
     def __init__(self, **redis_credentials):
         self.redis_client = redis.Redis(**redis_credentials)
 
-    def get_tables_ids(self):
+    def get_tables_ids(self, camera_id):
         status_keys = self.redis_client.keys(
-            CAMERA_KEYS['chaos_levels'].format(camera_id="*", table_id="*")
+            CAMERA_KEYS['chaos_levels'].format(camera_id=camera_id, table_id="*")
         )
         ids = [key.split(":")[-2] for key in status_keys]
         return ids
 
-    def get_all_tables(self):
-        return [Table(id) for id in self.get_tables_ids()]
+    def get_all_tables(self, camera_id):
+        return [Table(id) for id in self.get_tables_ids(camera_id)]
 
 
 class Table(object):

@@ -1,7 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
 <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
-    <script src="{{ url_for('static', filename='sockets.js') }}"></script>
 <div id='main'>
     <div class="hero-unit">
         <h1>Chaos!</h1>
@@ -9,27 +8,33 @@
         <a href="https://wiki.hackerspace.pl/projects:hs-chaos" class="btn btn-success">Learn more!</a>
     </div>
     <h2>Available devices</h2>
+    {% for camera_id, path in cameras %}
 <div class="media">
     <a class="pull-left" href="#">
-        <img class="media-object" src='http://placekitten.com/100/100'/>
+        <img class="media-object" height="82" width="82" src="{{ url_for('static', filename=path)}}"/>
     </a>
     <div class="media-body">
-        <h4 class="media-heading">Camera 1</h4>
+        <h4 class="media-heading">Camera {{camera_id}}</h4>
         <p>Camera placed in the first room</p>
     </div>
 </div>
+    {% endfor %}
 
     <hr />
-    <h2>Camera 1</h2>
+    {% for camera, path in cameras %}
+        <h2>Camera {{camera}}</h2>
 
-    <img class="media-object" src="{{ url_for('static', filename=path)}}"/>
+        <img class="media-object" src="{{ url_for('static', filename=path)}}"/>
 
-    <h2>Camera one tables - basic info</h2>
+    {% endfor %}
+
+    {% for camera_id, tables in tables_per_cam.items() %}
+    <h2>Camera {{camera_id}} tables - basic info</h2>
 
     <h4>Tables' status
         <a href="{{url_for('index')}}" class="btn btn-warning btn-large">Reload</a>
     </h4>
-    {% for table in tables %}
+        {% for table in tables %}
         <div class="row-fluid">
             <div class="well-large span8">
 
@@ -74,6 +79,7 @@
             </div>
         </div>
 
+        {% endfor %}
     {% endfor %}
 
     {% if session.logged_in %}
@@ -85,13 +91,17 @@
     <form class='table_form form-horizontal'
         action="{{ url_for('index') }}" method=post>
 
-        <select id='table_id' name='table_id'>
-            {% for table in tables %}
-                <option value={{table.id}}>Table: {{table.id}}</option>
+            <select id='table_id' name='table_id'>
+            {% for camera, tables in tables_per_cam.items() %}
+                {% for table in tables %}
+                    <option value={{table.id}}>{{camera}}: table: {{table.id}}</option>
+                {% endfor %}
             {% endfor %}
-        </select>
-        <input id="claim" value="Claim" class="btn btn-success">
-        <input id="free"  value="Free" class="btn btn-success">
+            </select>
+            <hr />
+
+            <input id="claim" value="Claim" class="btn btn-success">
+            <input id="free"  value="Free" class="btn btn-success">
     </form>
     </div>
 
@@ -108,7 +118,6 @@
         function claim_table() {
             $.post(
                 '/claim', {
-                bla: "bla bla",
                 table_id: $('#table_id').val()
                 }
             ).done(function() {
