@@ -38,12 +38,13 @@
         <div class="row-fluid">
             <div class="well-large span8">
 
-                <div class="media">
+                <div class="media" style="border-style:solid;
+                        border-color: rgb{{table.color}};" >
                     <a class="pull-left" href="#">
                         <img class="media-object" src='http://placekitten.com/120/180'/>
                     </a>
                     <div class="media-body">
-                    <h4 class="media-heading">Table {{table.id}}</h4>
+                    <h4 class="media-heading">Table {{table.name}}</h4>
 
                     {% if table.message %}
                     <div class="alert alert-error">
@@ -94,7 +95,7 @@
             <select id='table_id' name='table_id'>
             {% for camera, tables in tables_per_cam.items() %}
                 {% for table in tables %}
-                    <option value={{table.id}}>{{camera}}: table: {{table.id}}</option>
+                    <option value="{{table.id}}">{{camera}}: table: {{table.name}}</option>
                 {% endfor %}
             {% endfor %}
             </select>

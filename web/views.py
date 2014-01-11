@@ -43,11 +43,10 @@ def index():
 @app.route('/claim', methods=['POST'])
 def claim():
     table_id = request.form['table_id']
-    print table_id
     table = Table(table_id)
     table.claim(session['username'])
 
-    flash('Table: %s in now on you. Take care of it!' % table_id)
+    flash('Table: %s in now on you. Take care of it!' % table.name)
     return "200"
 
 @login_required
@@ -56,7 +55,7 @@ def free():
     table_id = request.form['table_id']
     table = Table(table_id)
     table.free(session['username'])
-    flash('Table: %s is now free. Thanks!' % table_id)
+    flash('Table: %s is now free. Thanks!' % table.name)
     return "200"
 
 @app.route('/login', methods=['GET', 'POST'])

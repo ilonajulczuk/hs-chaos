@@ -30,6 +30,8 @@ def table_statuses():
             occupied = table.is_used_now()
             table_status = {
                 'id': table.id,
+                'name': table.name,
+                'color': table.color,
                 'chaos_percentage': chaos_level,
                 'actions': occupancy_data,
                 'occupied': occupied

@@ -148,6 +148,8 @@ class Table(object):
 
     def __init__(self, id, redis_credentials=redis_defaults):
         self.id = id
+        self.name = id.split('-')[-2]
+        self.color = id.split('-')[-1]
         self.redis_client = redis.Redis(**redis_credentials)
 
     def is_used_now(self):
