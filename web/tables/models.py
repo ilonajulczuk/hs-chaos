@@ -4,6 +4,8 @@ import pickle
 from PIL import Image
 import datetime
 from datetime import timedelta, datetime
+from settings import redis_defaults
+
 
 app_namespace = "junk_vision"
 
@@ -36,7 +38,7 @@ TABLE_KEYS = {
 
 class CameraManager(object):
 
-    def __init__(self, **redis_credentials):
+    def __init__(self, redis_credentials=redis_defaults):
         self.redis_client = redis.Redis(**redis_credentials)
 
     def get_cameras_ids(self):
@@ -51,11 +53,11 @@ class CameraManager(object):
 
 
 class Camera(object):
-    redis_client = redis.Redis()
     LIST_LIMIT = 100
 
-    def __init__(self, camera_id):
+    def __init__(self, camera_id, redis_credentials=redis_defaults):
         self.camera_id = camera_id
+        self.redis_client = redis.Redis(**redis_credentials)
 
     def push_chaos_levels(self, chaos_levels):
         for table_id, chaos_level in chaos_levels.items():
@@ -122,7 +124,7 @@ class Camera(object):
 
 class TableManager(object):
 
-    def __init__(self, **redis_credentials):
+    def __init__(self, redis_credentials=redis_defaults):
         self.redis_client = redis.Redis(**redis_credentials)
 
     def get_tables_ids(self, camera_id):
@@ -144,9 +146,9 @@ class Table(object):
 
     LIST_LIMIT = 10
 
-    def __init__(self, id):
+    def __init__(self, id, redis_credentials=redis_defaults):
         self.id = id
-        self.redis_client = redis.Redis()
+        self.redis_client = redis.Redis(**redis_credentials)
 
     def is_used_now(self):
         key = TABLE_KEYS['status'].format(table_id=self.id)
