@@ -10,7 +10,6 @@ from flask import (
 )
 
 from tables.models import Table, Camera, CameraManager
-from tables.reporter import ChaosReporter
 import redis
 import json
 import requests
